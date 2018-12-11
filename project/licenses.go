@@ -24,7 +24,7 @@ import (
 
 	"github.com/spf13/viper"
 
-	"github.com/polyswarm/perigord/templates"
+	"gitlab.inn4science.com/gophers/perigord/templates"
 )
 
 // Licenses contains all possible licenses a user can choose from.

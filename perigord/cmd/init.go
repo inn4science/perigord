@@ -18,8 +18,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/polyswarm/perigord/project"
-	"github.com/polyswarm/perigord/templates"
+	"gitlab.inn4science.com/gophers/perigord/project"
+	"gitlab.inn4science.com/gophers/perigord/templates"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -33,7 +33,7 @@ and the appropriate structure for a perigord-based project.
   * If a name is provided, it will be created in the current directory;
   * If no name is provided, the current directory will be assumed;
   * If a relative path is provided, it will be created inside $GOPATH
-    (e.g. github.com/polyswarm/perigord);
+    (e.g. gitlab.inn4science.com/gophers/perigord);
   * If an absolute path is provided, it will be created;
   * If the directory already exists but is empty, it will be used.
 

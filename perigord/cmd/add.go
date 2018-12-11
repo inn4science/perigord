@@ -21,8 +21,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/polyswarm/perigord/project"
-	"github.com/polyswarm/perigord/templates"
+	"gitlab.inn4science.com/gophers/perigord/project"
+	"gitlab.inn4science.com/gophers/perigord/templates"
 )
 
 var addCmd = &cobra.Command{

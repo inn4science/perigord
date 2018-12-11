@@ -1,7 +1,7 @@
 # Perigord stub
 
 This file just serves as an entry point for the
-github.com/polyswarm/perigord/stub command, which serves as a driver for
+gitlab.inn4science.com/gophers/perigord/stub command, which serves as a driver for
 perigord subcommands such as test and deploy which must link against your
 migrations and tests.
 

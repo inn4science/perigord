@@ -70,7 +70,7 @@ $ popd
 ## Setup
 
 ```
-$ go get -u github.com/polyswarm/perigord/...
+$ go get -u gitlab.inn4science.com/gophers/perigord/...
 ```
 
 ### Dev Dependency: `go-bindata`

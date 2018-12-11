@@ -7,9 +7,9 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 
-	"github.com/polyswarm/perigord/contract"
-	"github.com/polyswarm/perigord/migration"
-	"github.com/polyswarm/perigord/network"
+	"gitlab.inn4science.com/gophers/perigord/contract"
+	"gitlab.inn4science.com/gophers/perigord/migration"
+	"gitlab.inn4science.com/gophers/perigord/network"
 
 	"{{.project}}/bindings"
 )

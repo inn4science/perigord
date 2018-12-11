@@ -19,8 +19,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	perigord "github.com/polyswarm/perigord/perigord/cmd"
-	"github.com/polyswarm/perigord/project"
+	perigord "gitlab.inn4science.com/gophers/perigord/perigord/cmd"
+	"gitlab.inn4science.com/gophers/perigord/project"
 )
 
 var RootCmd = &cobra.Command{
