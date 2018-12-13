@@ -44,7 +44,7 @@ func (d *{{.contract}}Deployer) Bind(ctx context.Context, network *network.Netwo
 	account := network.Accounts()[0]
 	err := network.Unlock(account)
 	if err != nil {
-		return common.Address{}, nil, nil, err
+		return common.Address{}, err
 	}
 
 	auth := network.NewTransactor(account)

@@ -189,13 +189,15 @@ func (n *Network) initHDWallet() *hdwallet.Wallet {
 	var i int64
 	for i = 0; i < n.NumAccounts(); i++ {
 		path := hdwallet.MustParseDerivationPath(fmt.Sprintf("m/44'/60'/0'/0/%d", i))
-		account, err := wallet.Derive(path, false)
+		account, err := wallet.Derive(path, true)
 		if err != nil {
 			log.Fatal(err)
 		}
 		fmt.Println(account.Address.Hex())
 
 	}
+
+	fmt.Println(wallet.Accounts())
 
 	return wallet
 }
