@@ -113,7 +113,8 @@ func Dial(name string) (*Network, error) {
 	if config.mnemonic != "" {
 		ret.hdWallet = ret.initHDWallet()
 	}
-	if len(ret.keystore.Accounts()) == 0 || ret.hdWallet == nil {
+
+	if len(ret.Accounts()) == 0 {
 		return nil, errors.New("no accounts configured for this network, did you set the keystore path or mnemonic in perigord.yaml")
 	}
 
@@ -161,7 +162,10 @@ func (n *Network) Accounts() []accounts.Account {
 	if n.keystore != nil {
 		return n.keystore.Accounts()
 	}
-	return n.hdWallet.Accounts()
+	if n.hdWallet != nil {
+		return n.hdWallet.Accounts()
+	}
+	return nil
 }
 
 func (n *Network) Unlock(a accounts.Account) error {
