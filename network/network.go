@@ -16,6 +16,10 @@ package network
 import (
 	"errors"
 	"fmt"
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/jbenet/go-base58"
+	"github.com/tyler-smith/go-bip32"
 	"log"
 	"path/filepath"
 	"strconv"
@@ -157,13 +161,17 @@ func (n *Network) Accounts() []accounts.Account {
 }
 
 func (n *Network) Unlock(a accounts.Account, passphrase string) error {
-	return n.keystore.Unlock(a, passphrase)
+	if n.keystore != nil {
+		return n.keystore.Unlock(a, passphrase)
+	}
+	//log.Fatal("CANNOT UNLOCK NIL")
+	return nil
 }
 
 func (n *Network) GenerateWalletsFromMnemonic(amount int) []accounts.Account {
 	accounts := []accounts.Account{}
 	mnemonic := n.Mnemonic()
-	fmt.Print(mnemonic)
+	//fmt.Print(mnemonic)
 	wallet, err := hdwallet.NewFromMnemonic(mnemonic)
 	if err != nil {
 		log.Fatal(err)
@@ -183,24 +191,74 @@ func (n *Network) GenerateWalletsFromMnemonic(amount int) []accounts.Account {
 }
 
 func (n *Network) UnlockWithPrompt(a accounts.Account) error {
-	passphrase := n.Passphrase()
-	return n.Unlock(a, string(passphrase))
+	if n.keystore != nil {
+		passphrase := n.Passphrase()
+		return n.Unlock(a, string(passphrase))
+	}
+	mnemonic := n.Mnemonic()
+	return n.Unlock(a, string(mnemonic))
 }
 
 func (n *Network) NewTransactor(a accounts.Account) *bind.TransactOpts {
 	return &bind.TransactOpts{
-		From: a.Address,
+		From:  a.Address,
+		Nonce: nil,
 		Signer: func(signer types.Signer, address common.Address, tx *types.Transaction) (*types.Transaction, error) {
 			if address != a.Address {
 				return nil, errors.New("not authorized to sign this account")
 			}
-
-			signature, err := n.keystore.SignHash(a, signer.Hash(tx).Bytes())
-			if err != nil {
-				return nil, err
+			fmt.Println(a)
+			if n.keystore != nil {
+				signature, err := n.keystore.SignHash(a, signer.Hash(tx).Bytes())
+				if err != nil {
+					return nil, err
+				}
+				return tx.WithSignature(signer, signature)
 			}
 
-			return tx.WithSignature(signer, signature)
+
+			//seed, err := bip32.NewSeed()
+			//if err != nil {
+			//	log.Fatal(err)
+			//}
+
+			master, err := bip32.NewMasterKey([]byte(n.Mnemonic()))
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			// m/44'
+			key, err := master.NewChildKey(2147483648 + 44)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			decoded := base58.Decode(key.B58Serialize())
+			privateKey := decoded[46:78]
+			fmt.Println(hexutil.Encode(privateKey)) // 0x801f14cc6b5f2b0785916685c838c8e64f7f4529a9ca7507c90e5f9078cefc07
+
+			// Hex private key to ECDSA private key
+			privateKeyECDSA, err := crypto.ToECDSA(privateKey)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			// ECDSA private key to hex private key
+			privateKey = crypto.FromECDSA(privateKeyECDSA)
+			//fmt.Println(hexutil.Encode(privateKey)) // 0x801f14cc6b5f2b0785916685c838c8e64f7f4529a9ca7507c90e5f9078cefc07
+
+			//transaction := types.NewTransaction(nonce, recipient, value, gasLimit, gasPrice, input)
+			//signature, _ := crypto.Sign(transaction.SigHash().Bytes(), key)
+
+
+			sig, _ := crypto.Sign(signer.Hash(tx).Bytes(), privateKeyECDSA)
+			//signed, _ := tx.WithSignature(signer, signature)
+
+			return tx.WithSignature(signer, sig)
 		},
+		Value:    nil,
+		GasPrice: nil,
+		GasLimit: 0,
+		Context:  nil,
 	}
 }
