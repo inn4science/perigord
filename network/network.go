@@ -15,7 +15,10 @@ package network
 
 import (
 	"errors"
+	"fmt"
+	"log"
 	"path/filepath"
+	"strconv"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -26,6 +29,7 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/spf13/viper"
 
+	"github.com/miguelmota/go-ethereum-hdwallet"
 	"gitlab.inn4science.com/gophers/perigord/project"
 )
 
@@ -33,6 +37,8 @@ type NetworkConfig struct {
 	url           string
 	keystore_path string
 	passphrase    string
+	mnemonic      string
+	num_accounts  string
 }
 
 var networks map[string]NetworkConfig
@@ -56,7 +62,9 @@ func InitNetworks() error {
 		networks[key] = NetworkConfig{
 			url:           config["url"],
 			keystore_path: config["keystore"],
-			passphrase: config["passphrase"],
+			passphrase:    config["passphrase"],
+			mnemonic:      config["mnemonic"],
+			num_accounts:  config["num_accounts"],
 		}
 	}
 
@@ -76,12 +84,16 @@ func Dial(name string) (*Network, error) {
 		if err != nil {
 			return nil, err
 		}
-
+		var ks *keystore.KeyStore
 		client := ethclient.NewClient(rpc_client)
-
-		ks := keystore.NewKeyStore(config.keystore_path, keystore.StandardScryptN, keystore.StandardScryptP)
-		if len(ks.Accounts()) == 0 {
-			return nil, errors.New("No accounts configured for this network, did you set the keystore path in perigord.yaml?")
+		if config.keystore_path != "" {
+			ks = keystore.NewKeyStore(config.keystore_path, keystore.StandardScryptN, keystore.StandardScryptP)
+			if len(ks.Accounts()) == 0 {
+				return nil, errors.New("No accounts configured for this network, did you set the keystore path in perigord.yaml?")
+			}
+		}
+		if config.keystore_path == "" {
+			ks = nil
 		}
 
 		ret := &Network{
@@ -109,6 +121,18 @@ func (n *Network) Passphrase() string {
 	return networks[n.name].passphrase
 }
 
+func (n *Network) Mnemonic() string {
+	return networks[n.name].mnemonic
+}
+
+func (n *Network) NumAccounts() int {
+	accountsNumber, err := strconv.Atoi(networks[n.name].num_accounts)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return accountsNumber
+}
+
 func (n *Network) KeystorePath() string {
 	return networks[n.name].keystore_path
 }
@@ -126,11 +150,36 @@ func (n *Network) Keystore() *keystore.KeyStore {
 }
 
 func (n *Network) Accounts() []accounts.Account {
-	return n.keystore.Accounts()
+	if n.keystore != nil {
+		return n.keystore.Accounts()
+	}
+	return n.GenerateWalletsFromMnemonic(n.NumAccounts())
 }
 
 func (n *Network) Unlock(a accounts.Account, passphrase string) error {
 	return n.keystore.Unlock(a, passphrase)
+}
+
+func (n *Network) GenerateWalletsFromMnemonic(amount int) []accounts.Account {
+	accounts := []accounts.Account{}
+	mnemonic := n.Mnemonic()
+	fmt.Print(mnemonic)
+	wallet, err := hdwallet.NewFromMnemonic(mnemonic)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for i := 0; i < amount; i++ {
+		path := hdwallet.MustParseDerivationPath("m/44'/60'/0'/0/" + strconv.Itoa(i))
+		account, err := wallet.Derive(path, false)
+		if err != nil {
+			log.Fatal(err)
+		}
+		accounts = append(accounts, account)
+		//use to get hex representation of an address
+		//fmt.Println(account.Address.Hex())
+	}
+	return accounts
 }
 
 func (n *Network) UnlockWithPrompt(a accounts.Account) error {

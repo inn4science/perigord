@@ -7,3 +7,4 @@ networks:
         keystore: /tmp/geth_private_testnet/keystore
         passphrase: blah
         mnemonic: candy maple cake sugar pudding cream honey rich smooth crumble sweet treat
+        num_accounts: 10
