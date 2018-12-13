@@ -18,7 +18,10 @@ type {{.contract}}Deployer struct{}
 
 func (d *{{.contract}}Deployer) Deploy(ctx context.Context, network *network.Network) (common.Address, *types.Transaction, interface{}, error) {
 	account := network.Accounts()[0]
-	network.UnlockWithPrompt(account)
+	err := network.Unlock(account)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
 
 	auth := network.NewTransactor(account)
 	address, transaction, contract, err := bindings.Deploy{{.contract}}(auth, network.Client())
@@ -39,7 +42,10 @@ func (d *{{.contract}}Deployer) Deploy(ctx context.Context, network *network.Net
 
 func (d *{{.contract}}Deployer) Bind(ctx context.Context, network *network.Network, address common.Address) (interface{}, error) {
 	account := network.Accounts()[0]
-	network.UnlockWithPrompt(account)
+	err := network.Unlock(account)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
 
 	auth := network.NewTransactor(account)
 	contract, err := bindings.New{{.contract}}(address, network.Client())
