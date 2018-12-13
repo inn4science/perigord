@@ -16,10 +16,6 @@ package network
 import (
 	"errors"
 	"fmt"
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/jbenet/go-base58"
-	"github.com/tyler-smith/go-bip32"
 	"log"
 	"path/filepath"
 	"strconv"
@@ -31,18 +27,17 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
-	"github.com/spf13/viper"
-
 	"github.com/miguelmota/go-ethereum-hdwallet"
+	"github.com/spf13/viper"
 	"gitlab.inn4science.com/gophers/perigord/project"
 )
 
 type NetworkConfig struct {
-	url           string
-	keystore_path string
-	passphrase    string
-	mnemonic      string
-	num_accounts  string
+	url          string
+	keystorePath string
+	passphrase   string
+	mnemonic     string
+	numAccounts  int64
 }
 
 var networks map[string]NetworkConfig
@@ -63,13 +58,22 @@ func InitNetworks() error {
 
 	for key, _ := range configs {
 		config := viper.GetStringMapString("networks." + key)
-		networks[key] = NetworkConfig{
-			url:           config["url"],
-			keystore_path: config["keystore"],
-			passphrase:    config["passphrase"],
-			mnemonic:      config["mnemonic"],
-			num_accounts:  config["num_accounts"],
+		var count int64
+		if config["mnemonic"] != "" {
+			count, err = strconv.ParseInt(config["num_accounts"], 10, 64)
+			if err != nil {
+				count = 10
+			}
 		}
+
+		networks[key] = NetworkConfig{
+			url:          config["url"],
+			keystorePath: config["keystore"],
+			passphrase:   config["passphrase"],
+			mnemonic:     config["mnemonic"],
+			numAccounts:  count,
+		}
+
 	}
 
 	return nil
@@ -80,37 +84,41 @@ type Network struct {
 	rpc_client *rpc.Client
 	client     *ethclient.Client
 	keystore   *keystore.KeyStore
+	hdWallet   *hdwallet.Wallet
 }
 
 func Dial(name string) (*Network, error) {
-	if config, ok := networks[name]; ok {
-		rpc_client, err := rpc.Dial(config.url)
-		if err != nil {
-			return nil, err
-		}
-		var ks *keystore.KeyStore
-		client := ethclient.NewClient(rpc_client)
-		if config.keystore_path != "" {
-			ks = keystore.NewKeyStore(config.keystore_path, keystore.StandardScryptN, keystore.StandardScryptP)
-			if len(ks.Accounts()) == 0 {
-				return nil, errors.New("No accounts configured for this network, did you set the keystore path in perigord.yaml?")
-			}
-		}
-		if config.keystore_path == "" {
-			ks = nil
-		}
-
-		ret := &Network{
-			name:       name,
-			rpc_client: rpc_client,
-			client:     client,
-			keystore:   ks,
-		}
-
-		return ret, nil
+	config, ok := networks[name]
+	if !ok {
+		return nil, errors.New("No such network " + name)
 	}
 
-	return nil, errors.New("No such network " + name)
+	rpc_client, err := rpc.Dial(config.url)
+	if err != nil {
+		return nil, err
+	}
+
+	client := ethclient.NewClient(rpc_client)
+	ret := &Network{
+		name:       name,
+		rpc_client: rpc_client,
+		client:     client,
+	}
+
+	if config.keystorePath != "" {
+		ret.keystore = ret.initKeystore(config.keystorePath)
+
+	}
+
+	if config.mnemonic != "" {
+		ret.hdWallet = ret.initHDWallet()
+	}
+	if len(ret.keystore.Accounts()) == 0 || ret.hdWallet == nil {
+		return nil, errors.New("no accounts configured for this network, did you set the keystore path or mnemonic in perigord.yaml")
+	}
+
+	return ret, nil
+
 }
 
 func (n *Network) Name() string {
@@ -129,16 +137,12 @@ func (n *Network) Mnemonic() string {
 	return networks[n.name].mnemonic
 }
 
-func (n *Network) NumAccounts() int {
-	accountsNumber, err := strconv.Atoi(networks[n.name].num_accounts)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return accountsNumber
+func (n *Network) NumAccounts() int64 {
+	return networks[n.name].numAccounts
 }
 
 func (n *Network) KeystorePath() string {
-	return networks[n.name].keystore_path
+	return networks[n.name].keystorePath
 }
 
 func (n *Network) RpcClient() *rpc.Client {
@@ -157,46 +161,39 @@ func (n *Network) Accounts() []accounts.Account {
 	if n.keystore != nil {
 		return n.keystore.Accounts()
 	}
-	return n.GenerateWalletsFromMnemonic(n.NumAccounts())
+	return n.hdWallet.Accounts()
 }
 
-func (n *Network) Unlock(a accounts.Account, passphrase string) error {
+func (n *Network) Unlock(a accounts.Account) error {
 	if n.keystore != nil {
-		return n.keystore.Unlock(a, passphrase)
+		return n.keystore.Unlock(a, n.Passphrase())
 	}
-	//log.Fatal("CANNOT UNLOCK NIL")
 	return nil
 }
 
-func (n *Network) GenerateWalletsFromMnemonic(amount int) []accounts.Account {
-	accounts := []accounts.Account{}
+func (n *Network) initKeystore(keystorePath string) *keystore.KeyStore {
+	return keystore.NewKeyStore(keystorePath, keystore.StandardScryptN, keystore.StandardScryptP)
+}
+
+func (n *Network) initHDWallet() *hdwallet.Wallet {
 	mnemonic := n.Mnemonic()
-	//fmt.Print(mnemonic)
 	wallet, err := hdwallet.NewFromMnemonic(mnemonic)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	for i := 0; i < amount; i++ {
-		path := hdwallet.MustParseDerivationPath("m/44'/60'/0'/0/" + strconv.Itoa(i))
+	var i int64
+	for i = 0; i < n.NumAccounts(); i++ {
+		path := hdwallet.MustParseDerivationPath(fmt.Sprintf("m/44'/60'/0'/0/%d", i))
 		account, err := wallet.Derive(path, false)
 		if err != nil {
 			log.Fatal(err)
 		}
-		accounts = append(accounts, account)
-		//use to get hex representation of an address
-		//fmt.Println(account.Address.Hex())
-	}
-	return accounts
-}
+		fmt.Println(account.Address.Hex())
 
-func (n *Network) UnlockWithPrompt(a accounts.Account) error {
-	if n.keystore != nil {
-		passphrase := n.Passphrase()
-		return n.Unlock(a, string(passphrase))
 	}
-	mnemonic := n.Mnemonic()
-	return n.Unlock(a, string(mnemonic))
+
+	return wallet
 }
 
 func (n *Network) NewTransactor(a accounts.Account) *bind.TransactOpts {
@@ -207,7 +204,6 @@ func (n *Network) NewTransactor(a accounts.Account) *bind.TransactOpts {
 			if address != a.Address {
 				return nil, errors.New("not authorized to sign this account")
 			}
-			fmt.Println(a)
 			if n.keystore != nil {
 				signature, err := n.keystore.SignHash(a, signer.Hash(tx).Bytes())
 				if err != nil {
@@ -216,45 +212,11 @@ func (n *Network) NewTransactor(a accounts.Account) *bind.TransactOpts {
 				return tx.WithSignature(signer, signature)
 			}
 
-
-			//seed, err := bip32.NewSeed()
-			//if err != nil {
-			//	log.Fatal(err)
-			//}
-
-			master, err := bip32.NewMasterKey([]byte(n.Mnemonic()))
+			signature, err := n.hdWallet.SignHash(a, signer.Hash(tx).Bytes())
 			if err != nil {
-				log.Fatal(err)
+				return nil, err
 			}
-
-			// m/44'
-			key, err := master.NewChildKey(2147483648 + 44)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			decoded := base58.Decode(key.B58Serialize())
-			privateKey := decoded[46:78]
-			fmt.Println(hexutil.Encode(privateKey)) // 0x801f14cc6b5f2b0785916685c838c8e64f7f4529a9ca7507c90e5f9078cefc07
-
-			// Hex private key to ECDSA private key
-			privateKeyECDSA, err := crypto.ToECDSA(privateKey)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			// ECDSA private key to hex private key
-			privateKey = crypto.FromECDSA(privateKeyECDSA)
-			//fmt.Println(hexutil.Encode(privateKey)) // 0x801f14cc6b5f2b0785916685c838c8e64f7f4529a9ca7507c90e5f9078cefc07
-
-			//transaction := types.NewTransaction(nonce, recipient, value, gasLimit, gasPrice, input)
-			//signature, _ := crypto.Sign(transaction.SigHash().Bytes(), key)
-
-
-			sig, _ := crypto.Sign(signer.Hash(tx).Bytes(), privateKeyECDSA)
-			//signed, _ := tx.WithSignature(signer, signature)
-
-			return tx.WithSignature(signer, sig)
+			return tx.WithSignature(signer, signature)
 		},
 		Value:    nil,
 		GasPrice: nil,
