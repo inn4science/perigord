@@ -135,6 +135,9 @@ func compileContracts() error {
 
 func handleErrors(output map[string]interface{}) error {
 	hasFatal := false
+	if output["errors"] == nil {
+		return nil
+	}
 	compilerErrors, ok := output["errors"].([]interface{})
 	if !ok {
 		return errors.New("Invalid json")
