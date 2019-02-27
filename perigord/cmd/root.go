@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"gitlab.inn4science.com/gophers/perigord/project"
+	"gitlab.com/go-truffle/enhanced-perigord/project"
 )
 
 var RootCmd = &cobra.Command{

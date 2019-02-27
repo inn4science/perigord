@@ -26,8 +26,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"gitlab.inn4science.com/gophers/perigord/project"
-	"gitlab.inn4science.com/gophers/perigord/templates"
+	"gitlab.com/go-truffle/enhanced-perigord/project"
+	"gitlab.com/go-truffle/enhanced-perigord/templates"
 )
 
 var compileCmd = &cobra.Command{

@@ -35,7 +35,7 @@
 
 [[constraint]]
   branch = "master"
-  name = "gitlab.inn4science.com/gophers/perigord"
+  name = "gitlab.com/go-truffle/enhanced-perigord"
 
 [prune]
   go-tests = true
