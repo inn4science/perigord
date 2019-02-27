@@ -29,7 +29,7 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/miguelmota/go-ethereum-hdwallet"
 	"github.com/spf13/viper"
-	"gitlab.inn4science.com/gophers/perigord/project"
+	"gitlab.com/go-truffle/enhanced-perigord/project"
 )
 
 type NetworkConfig struct {

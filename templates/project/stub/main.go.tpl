@@ -4,7 +4,7 @@ package main
 
 import (
 	_ "{{.project}}/migrations"
-	"gitlab.inn4science.com/gophers/perigord/stub"
+	"gitlab.com/go-truffle/enhanced-perigord/stub"
 )
 
 func main() {

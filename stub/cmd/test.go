@@ -17,7 +17,7 @@ import (
 	"runtime"
 
 	"github.com/spf13/cobra"
-	perigord "gitlab.inn4science.com/gophers/perigord/perigord/cmd"
+	perigord "gitlab.com/go-truffle/enhanced-perigord/perigord/cmd"
 )
 
 var testCmd = &cobra.Command{

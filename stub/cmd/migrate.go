@@ -19,9 +19,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"gitlab.inn4science.com/gophers/perigord/migration"
-	"gitlab.inn4science.com/gophers/perigord/network"
-	perigord "gitlab.inn4science.com/gophers/perigord/perigord/cmd"
+	"gitlab.com/go-truffle/enhanced-perigord/migration"
+	"gitlab.com/go-truffle/enhanced-perigord/network"
+	perigord "gitlab.com/go-truffle/enhanced-perigord/perigord/cmd"
 )
 
 var migrateCmd = &cobra.Command{

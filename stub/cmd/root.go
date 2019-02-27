@@ -19,8 +19,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	perigord "gitlab.inn4science.com/gophers/perigord/perigord/cmd"
-	"gitlab.inn4science.com/gophers/perigord/project"
+	perigord "gitlab.com/go-truffle/enhanced-perigord/perigord/cmd"
+	"gitlab.com/go-truffle/enhanced-perigord/project"
 )
 
 var RootCmd = &cobra.Command{

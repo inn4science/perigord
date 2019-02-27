@@ -7,10 +7,10 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 
-	"gitlab.inn4science.com/gophers/perigord/contract"
-	"gitlab.inn4science.com/gophers/perigord/migration"
-	"gitlab.inn4science.com/gophers/perigord/migration/bindings"
-	"gitlab.inn4science.com/gophers/perigord/network"
+	"gitlab.com/go-truffle/enhanced-perigord/contract"
+	"gitlab.com/go-truffle/enhanced-perigord/migration"
+	"gitlab.com/go-truffle/enhanced-perigord/migration/bindings"
+	"gitlab.com/go-truffle/enhanced-perigord/network"
 )
 
 type MigrationsDeployer struct{}

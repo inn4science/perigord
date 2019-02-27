@@ -1,26 +1,26 @@
-# NOT ACTIVELY MAINTAINED
+# Enhanced Perigord
 
-**The PolySwarm team is currently unable to actively maintain Perigord at the moment.**
+**Perigord project was originally developed by the PolySwarm. However, the Polyswarm team is currently unable to actively maintain Perigord (as of February 2019).**
 
-The PolySwarm team's priority is to faithfully deliver on our roadmap (https://polyswarm.io/road_map/index.html), which regrettably demands we turn our attention away from Perigord in the short term.
-The Ethereum smart contract development space is simply moving too quickly right now for us to support a Truffle alternative in addition to hitting our development milestones.
+**The original PolySwarm repository is located on [Github](https://github.com/polyswarm/perigord). The PolySwarm team also released an article on how to use Perigord. You can find it on [Medium](https://decentralize.today/introducing-perigord-golang-tools-for-ethereum-dapp-development-60556c2d9fd).**
 
-**We plan to return to active Perigord maintenance in the future and will continue to welcome external contributions until we're able to resume work.**
+The original Perigord lacked several useful features one of them being able to generate a desired number of wallets from mnemonic and using them for testing with Ganache. We added these features and fixed several minor bugs so that you can use Perigord as you would use Truffle but without any JS code.
 
-Thank you for your understanding!
+The current README is based on the original Perigord README with clarifications and amendment that we consider important for using this version of the tool.
 
-~Paul
+~Olena Stoliarova, Inn4Science team
 
 
 # Perigord: Golang Tools for Ethereum Development
 
-*Note:* Perigord is in development and it's API is subject to change.
-
-![Perigord Image (not covered by LICENSE)](https://polyswarm.io/img/perigord-logo-small.jpg)
-
-This image is not covered by LICENSE. 
-
 ## Install
+Go get the current repository
+
+```$xslt
+$ go get https://gitlab.com/go-truffle/enhanced-perigord
+```
+
+Or for Ubuntu 16.04 x86\_64 environment
 
 There is a Dockerfile in `docker/Dockerfile` to build a perigord image, to build
 run
@@ -30,8 +30,6 @@ $ pushd docker
 $ docker build -t perigord .
 $ popd
 ```
-
-These instructions assume an Ubuntu 16.04 x86\_64 environment.
 
 ### Prerequisite: Golang 1.8
 
@@ -70,7 +68,7 @@ $ popd
 ## Setup
 
 ```
-$ go get -u gitlab.inn4science.com/gophers/perigord/...
+$ go get -u gitlab.com/go-truffle/enhanced-perigord/...
 ```
 
 ### Dev Dependency: `go-bindata`
@@ -89,9 +87,6 @@ $ perigord
 
 ## Tutorial
 
-[Refer to our introductory blog post for now.](https://medium.com/@swarmmarket/introducing-perigord-golang-tools-for-ethereum-dapp-development-60556c2d9fd)
-
-
 - Navigate to the directory where you want to start a new project. Open a terminal in this directory and type
 
 ````
@@ -103,7 +98,7 @@ Where projectName is the name of the project you want to initialize
 - Check that all perigord imports are using the following path
 
 ````
-gitlab.inn4science.com/gophers/perigord/{...}
+gitlab.com/go-truffle/enhanced-perigord/{...}
 
 ````
 
@@ -122,7 +117,7 @@ networks:
 You will ether use testnet with 5 pre-generated accounts or use truffle and an arbitrary number of accounts.
 To use testnet, leave url, keystore and passphrase and comment out other lines. Run launch_geth_testnet.sh from scripts directory.
 
-To use truffle, run ganache, comment out keystore and passphrase. url should point to the port where ganache is running. For example:
+To use Truffle, run Ganache, comment out keystore and passphrase. url should point to the port where ganache is running. For example:
 
 ````
  url: HTTP://127.0.0.1:7545
@@ -176,4 +171,7 @@ func (s *FooSuite) TestName(c *C) {
 }
 ````
 
-
+Run tests with
+```$xslt
+perigord test
+```

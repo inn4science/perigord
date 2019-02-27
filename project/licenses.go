@@ -24,7 +24,7 @@ import (
 
 	"github.com/spf13/viper"
 
-	"gitlab.inn4science.com/gophers/perigord/templates"
+	"gitlab.com/go-truffle/enhanced-perigord/templates"
 )
 
 // Licenses contains all possible licenses a user can choose from.
