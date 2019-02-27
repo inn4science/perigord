@@ -1,5 +1,4 @@
 *.swp
 *.swo
 .idea/*
-vendor/
 .DS_Store
