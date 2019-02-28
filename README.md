@@ -8,7 +8,7 @@ The original Perigord lacked several useful features one of them being able to g
 
 The current README is based on the original Perigord README with clarifications and amendment that we consider important for using this version of the tool.
 
-~Olena Stoliarova, Inn4Science team
+~Olena Stoliarova, [Inn4Science](https://www.inn4science.com/) team
 
 
 # Perigord: Golang Tools for Ethereum Development
