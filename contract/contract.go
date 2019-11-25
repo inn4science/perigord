@@ -23,8 +23,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"gitlab.com/go-truffle/enhanced-perigord/network"
-	"gitlab.com/go-truffle/enhanced-perigord/project"
+	"github.com/inn4science/perigord/network"
+	"github.com/inn4science/perigord/project"
 )
 
 type ContractDeployer interface {

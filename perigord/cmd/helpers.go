@@ -20,7 +20,7 @@ import (
 	"os/exec"
 	"runtime"
 
-	"gitlab.com/go-truffle/enhanced-perigord/project"
+	"github.com/inn4science/perigord/project"
 )
 
 func Fatal(v ...interface{}) {

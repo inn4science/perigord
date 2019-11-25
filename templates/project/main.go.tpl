@@ -4,7 +4,7 @@ package main
 import (
 //	"context"
 
-//	"gitlab.com/go-truffle/enhanced-perigord/migration"
+//	"github.com/inn4science/perigord/migration"
 
 	_ "{{.project}}/migrations"
 )

@@ -18,8 +18,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"gitlab.com/go-truffle/enhanced-perigord/project"
-	"gitlab.com/go-truffle/enhanced-perigord/templates"
+	"github.com/inn4science/perigord/project"
+	"github.com/inn4science/perigord/templates"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -33,7 +33,7 @@ and the appropriate structure for a perigord-based project.
   * If a name is provided, it will be created in the current directory;
   * If no name is provided, the current directory will be assumed;
   * If a relative path is provided, it will be created inside $GOPATH
-    (e.g. gitlab.com/go-truffle/enhanced-perigord);
+    (e.g. github.com/inn4science/perigord);
   * If an absolute path is provided, it will be created;
   * If the directory already exists but is empty, it will be used.
 

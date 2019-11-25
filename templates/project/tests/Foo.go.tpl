@@ -3,8 +3,8 @@ package tests
 import (
 	"gopkg.in/check.v1"
 
-	"gitlab.com/go-truffle/enhanced-perigord/contract"
-	"gitlab.com/go-truffle/enhanced-perigord/testing"
+	"github.com/inn4science/perigord/contract"
+	"github.com/inn4science/perigord/testing"
 
 	"{{.project}}/bindings"
 )

@@ -13,7 +13,7 @@
 
 package main
 
-import "gitlab.com/go-truffle/enhanced-perigord/perigord/cmd"
+import "github.com/inn4science/perigord/perigord/cmd"
 
 func main() {
 	cmd.Execute()

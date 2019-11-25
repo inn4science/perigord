@@ -27,9 +27,9 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/inn4science/perigord/project"
 	"github.com/miguelmota/go-ethereum-hdwallet"
 	"github.com/spf13/viper"
-	"gitlab.com/go-truffle/enhanced-perigord/project"
 )
 
 type NetworkConfig struct {

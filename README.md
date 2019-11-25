@@ -17,7 +17,7 @@ The current README is based on the original Perigord README with clarifications 
 Go get the current repository
 
 ```$xslt
-$ go get https://gitlab.com/go-truffle/enhanced-perigord
+$ go get https://github.com/inn4science/perigord
 ```
 
 Or for Ubuntu 16.04 x86\_64 environment
@@ -31,7 +31,7 @@ $ docker build -t perigord .
 $ popd
 ```
 
-### Prerequisite: Golang 1.8
+### Prerequisite: Golang 1.13+
 
 Some dependencies require Go 1.7+, but Go 1.6 is in Ubuntu 16.04's default repos.
 The below will install Go 1.8.
@@ -68,7 +68,7 @@ $ popd
 ## Setup
 
 ```
-$ go get -u gitlab.com/go-truffle/enhanced-perigord/...
+$ go get -u github.com/inn4science/perigord/...
 ```
 
 ### Dev Dependency: `go-bindata`
@@ -98,7 +98,7 @@ Where projectName is the name of the project you want to initialize
 - Check that all perigord imports are using the following path
 
 ````
-gitlab.com/go-truffle/enhanced-perigord/{...}
+github.com/inn4science/perigord/{...}
 
 ````
 

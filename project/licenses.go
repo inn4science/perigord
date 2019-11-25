@@ -22,9 +22,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/inn4science/perigord/templates"
 	"github.com/spf13/viper"
-
-	"gitlab.com/go-truffle/enhanced-perigord/templates"
 )
 
 // Licenses contains all possible licenses a user can choose from.

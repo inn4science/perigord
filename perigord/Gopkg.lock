@@ -114,7 +114,7 @@
 [[projects]]
   branch = "master"
   digest = "1:c507adff4d24b71f66c5eb0933c641e3beb3e10b4c9a7d5dc56ea90df163cea0"
-  name = "gitlab.com/go-truffle/enhanced-perigord"
+  name = "github.com/inn4science/perigord"
   packages = [
     "project",
     "templates",
@@ -159,8 +159,8 @@
   input-imports = [
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
-    "gitlab.com/go-truffle/enhanced-perigord/project",
-    "gitlab.com/go-truffle/enhanced-perigord/templates",
+    "github.com/inn4science/perigord/project",
+    "github.com/inn4science/perigord/templates",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

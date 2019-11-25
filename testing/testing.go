@@ -23,9 +23,9 @@ package testing
 import (
 	"context"
 
-	"gitlab.com/go-truffle/enhanced-perigord/contract"
-	"gitlab.com/go-truffle/enhanced-perigord/migration"
-	"gitlab.com/go-truffle/enhanced-perigord/network"
+	"github.com/inn4science/perigord/contract"
+	"github.com/inn4science/perigord/migration"
+	"github.com/inn4science/perigord/network"
 )
 
 func SetUpTest() (*network.Network, error) {

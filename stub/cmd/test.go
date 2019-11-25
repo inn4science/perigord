@@ -16,8 +16,8 @@ package cmd
 import (
 	"runtime"
 
+	perigord "github.com/inn4science/perigord/perigord/cmd"
 	"github.com/spf13/cobra"
-	perigord "gitlab.com/go-truffle/enhanced-perigord/perigord/cmd"
 )
 
 var testCmd = &cobra.Command{

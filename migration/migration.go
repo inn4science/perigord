@@ -21,9 +21,9 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 
-	"gitlab.com/go-truffle/enhanced-perigord/contract"
-	"gitlab.com/go-truffle/enhanced-perigord/migration/bindings"
-	"gitlab.com/go-truffle/enhanced-perigord/network"
+	"github.com/inn4science/perigord/contract"
+	"github.com/inn4science/perigord/migration/bindings"
+	"github.com/inn4science/perigord/network"
 )
 
 type MigrationFunc func(context.Context, *network.Network) error

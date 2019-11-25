@@ -13,7 +13,7 @@
 
 package stub
 
-import "gitlab.com/go-truffle/enhanced-perigord/stub/cmd"
+import "github.com/inn4science/perigord/stub/cmd"
 
 func StubMain() {
 	cmd.Execute()

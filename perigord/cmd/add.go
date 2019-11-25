@@ -21,8 +21,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"gitlab.com/go-truffle/enhanced-perigord/project"
-	"gitlab.com/go-truffle/enhanced-perigord/templates"
+	"github.com/inn4science/perigord/project"
+	"github.com/inn4science/perigord/templates"
 )
 
 var addCmd = &cobra.Command{

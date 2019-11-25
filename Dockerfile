@@ -18,16 +18,16 @@ RUN set -x && \
 ENV GOPATH /go
 ENV PATH $GOPATH/bin:$PATH
 
-RUN mkdir -p $GOPATH/src/gitlab.com/go-truffle/enhanced-perigord/
-ADD . $GOPATH/src/gitlab.com/go-truffle/enhanced-perigord/
+RUN mkdir -p $GOPATH/src/github.com/inn4science/perigord/
+ADD . $GOPATH/src/github.com/inn4science/perigord/
 
 RUN set -x && \
     go get -u github.com/ethereum/go-ethereum && \
     cd $GOPATH/src/github.com/ethereum/go-ethereum/cmd/abigen && \
     go install && \
     go get -u github.com/jteeuwen/go-bindata/... && \
-    (go get gitlab.com/go-truffle/enhanced-perigord/... || true) && \
-    cd $GOPATH/src/gitlab.com/go-truffle/enhanced-perigord && \
+    (go get github.com/inn4science/perigord/... || true) && \
+    cd $GOPATH/src/github.com/inn4science/perigord && \
     go generate && \
     cd perigord && \
     go install
